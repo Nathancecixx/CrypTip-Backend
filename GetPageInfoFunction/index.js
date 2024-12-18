@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-const PAGEINFO_TABLE = process.env.PAGEINFO_TABLE;
+const PAGEINFO_TABLE = TipPageInfo;
 
 // AWS Lambda Handler
 exports.handler = async (event) => {
