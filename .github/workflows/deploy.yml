@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch: # Allows manual trigger 
 jobs:
   deploy-lambda-functions:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
         run: |
           aws lambda update-function-configuration \
             --function-name ${{ matrix.function }} \
-            --environment "Variables={JWT_SECRET=${{ secrets.JWT_SECRET }},PAGEINFO_TABLE=${{ secrets.PAGEINFO_TABLE }},USERS_TABLE=${{ secrets.USERS_TABLE }}"
+            --environment "Variables={JWT_SECRET=${{ secrets.JWT_SECRET }},PAGEINFO_TABLE=${{ secrets.PAGEINFO_TABLE }},USERS_TABLE=${{ secrets.USERS_TABLE }}}"
 
       - name: Clean Up Zip File
         run: |
