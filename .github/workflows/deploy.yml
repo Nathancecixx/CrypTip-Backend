@@ -43,6 +43,9 @@ jobs:
             --function-name ${{ matrix.function }} \
             --zip-file fileb://${{ matrix.function }}/function.zip
 
+      - name: Wait for Deployment to Complete
+        run: sleep 30  # Wait for 30 seconds to ensure the previous operation completes
+
       - name: Update Environment Variables
         run: |
           aws lambda update-function-configuration \
