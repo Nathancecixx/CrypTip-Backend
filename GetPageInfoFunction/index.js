@@ -15,7 +15,11 @@ exports.handler = async (event) => {
     try {
         // Extract pageWalletId from path parameters
         const { pageWalletId } = event.pathParameters;
-        console.log(pageWalletId);
+        
+        console.log("Event object:", event);
+        console.log("Path parameters:", event.pathParameters);
+        console.log("Received pageWalletId:", pageWalletId);
+
         if (!pageWalletId) {
             return {
                 statusCode: 400,
