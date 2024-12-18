@@ -1,0 +1,14 @@
+{
+  "name": "GetPageInfoFunction",
+  "version": "1.0.0",
+  "description": "Lambda function to retrieve page information from DynamoDB.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1234.0"
+  },
+  "author": "Your Name",
+  "license": "ISC"
+}

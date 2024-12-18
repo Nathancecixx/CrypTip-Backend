@@ -1,0 +1,19 @@
+{
+    "name": "AuthenticateFunction",
+    "version": "1.0.0",
+    "description": "Lambda function to authenticate users via Solana wallet signatures and issue JWTs.",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "dependencies": {
+      "@solana/web3.js": "^1.62.0",
+      "aws-sdk": "^2.1234.0",
+      "jsonwebtoken": "^9.0.0",
+      "tweetnacl": "^1.0.3",
+      "tweetnacl-util": "^0.15.1"
+    },
+    "author": "Your Name",
+    "license": "ISC"
+  }
+  

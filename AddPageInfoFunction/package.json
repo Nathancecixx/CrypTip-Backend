@@ -1,0 +1,15 @@
+{
+  "name": "AddPageInfoFunction",
+  "version": "1.0.0",
+  "description": "Lambda function to add new page information to DynamoDB with JWT authentication.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1234.0",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "author": "Your Name",
+  "license": "ISC"
+}
