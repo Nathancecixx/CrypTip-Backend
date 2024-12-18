@@ -1,4 +1,2 @@
-# AuthenticateFunction/.gitignore
 node_modules/
-function.zip
 .env

@@ -1,14 +1,11 @@
-// GetPageInfoFunction/index.js
 
 const AWS = require('aws-sdk');
 
-// Initialize DynamoDB Document Client
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-// Retrieve environment variables
 const PAGEINFO_TABLE = process.env.PAGEINFO_TABLE;
 
-// Lambda Handler
+// AWS Lambda Handler
 exports.handler = async (event) => {
     try {
         // Extract pageWalletId from path parameters

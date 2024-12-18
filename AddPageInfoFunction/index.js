@@ -2,14 +2,12 @@
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
 
-// Initialize DynamoDB Document Client
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-// Retrieve environment variables
 const PAGEINFO_TABLE = process.env.PAGEINFO_TABLE;
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Lambda Handler
+// AWS Lambda Handler
 exports.handler = async (event) => {
     try {
         // Extract JWT from Authorization header
@@ -39,8 +37,7 @@ exports.handler = async (event) => {
                 body: JSON.stringify({ message: 'Invalid or expired token.' }),
             };
         }
-
-        // Optionally, you can use decoded information here (e.g., walletAddress)
+        // Extract wallet address stored in token
         const { walletAddress } = decoded;
         if (!walletAddress) {
             return {
@@ -63,7 +60,7 @@ exports.handler = async (event) => {
             }
         }
 
-        // Optionally, ensure that the walletAddress in the token matches the one in the body
+        // Ensure walletAddress in token matches the one inthe body
         if (body.walletAddress && body.walletAddress !== walletAddress) {
             return {
                 statusCode: 403,
@@ -88,7 +85,7 @@ exports.handler = async (event) => {
             templateId: body.templateId || 1,
             tokenName: body.tokenName || '',
             tokenSupply: body.tokenSupply || '',
-            walletAddress: body.walletAddress || walletAddress, // Ensure association with authenticated user
+            walletAddress: body.walletAddress || walletAddress,
         };
 
         const params = {

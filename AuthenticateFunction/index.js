@@ -1,4 +1,3 @@
-// AuthenticateFunction/index.js
 
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
@@ -6,15 +5,12 @@ const { PublicKey } = require('@solana/web3.js');
 const nacl = require('tweetnacl');
 nacl.util = require('tweetnacl-util');
 
-// Initialize DynamoDB Document Client
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-// Retrieve environment variables
-const USERS_TABLE = process.env.USERS_TABLE;
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRATION = process.env.JWT_EXPIRATION || 3600; // in seconds
+const JWT_EXPIRATION = 1800; // In seconds
 
-// Lambda Handler
+// AWS Lambda Handler
 exports.handler = async (event) => {
     try {
         const body = JSON.parse(event.body);

@@ -1,5 +1,3 @@
-# .github/workflows/deploy.yml
-
 name: CI/CD Pipeline for AWS Lambda
 
 on:
@@ -44,6 +42,12 @@ jobs:
           aws lambda update-function-code \
             --function-name ${{ matrix.function }} \
             --zip-file fileb://${{ matrix.function }}/function.zip
+
+      - name: Update Environment Variables
+        run: |
+          aws lambda update-function-configuration \
+            --function-name ${{ matrix.function }} \
+            --environment "Variables={JWT_SECRET=${{ secrets.JWT_SECRET }},PAGEINFO_TABLE=${{ secrets.PAGEINFO_TABLE }},USERS_TABLE=${{ secrets.USERS_TABLE }}"
 
       - name: Clean Up Zip File
         run: |
