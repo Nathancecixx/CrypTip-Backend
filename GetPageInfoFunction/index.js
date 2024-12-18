@@ -1,4 +1,3 @@
-
 const AWS = require('aws-sdk');
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
@@ -7,12 +6,19 @@ const PAGEINFO_TABLE = process.env.PAGEINFO_TABLE;
 
 // AWS Lambda Handler
 exports.handler = async (event) => {
+    const corsHeaders = {
+        "Access-Control-Allow-Origin": "*", // Or specify your frontend domain
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "OPTIONS,GET", // Include allowed methods
+    };
+
     try {
         // Extract pageWalletId from path parameters
         const { pageWalletId } = event.pathParameters;
         if (!pageWalletId) {
             return {
                 statusCode: 400,
+                headers: corsHeaders,
                 body: JSON.stringify({ message: 'Missing pageWalletId.' }),
             };
         }
@@ -27,18 +33,21 @@ exports.handler = async (event) => {
         if (!result.Item) {
             return {
                 statusCode: 404,
+                headers: corsHeaders,
                 body: JSON.stringify({ message: 'PageInfo not found.' }),
             };
         }
 
         return {
             statusCode: 200,
+            headers: corsHeaders,
             body: JSON.stringify(result.Item),
         };
     } catch (error) {
         console.error('Error in GetPageInfoFunction:', error);
         return {
             statusCode: 500,
+            headers: corsHeaders,
             body: JSON.stringify({ message: 'Internal server error.' }),
         };
     }
