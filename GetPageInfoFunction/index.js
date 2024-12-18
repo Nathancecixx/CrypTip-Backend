@@ -15,6 +15,7 @@ exports.handler = async (event) => {
     try {
         // Extract pageWalletId from path parameters
         const { pageWalletId } = event.pathParameters;
+        console.log(pageWalletId);
         if (!pageWalletId) {
             return {
                 statusCode: 400,
@@ -30,6 +31,7 @@ exports.handler = async (event) => {
         };
 
         const result = await dynamo.get(params).promise();
+        console.log(result);
         if (!result.Item) {
             return {
                 statusCode: 404,
