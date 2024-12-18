@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-
+  workflow_dispatch: # Allows manual trigger
 jobs:
   deploy-lambda-functions:
     runs-on: ubuntu-latest
