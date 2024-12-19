@@ -7,6 +7,13 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 const PAGEINFO_TABLE = process.env.PAGEINFO_TABLE;
 const JWT_SECRET = process.env.JWT_SECRET;
 
+
+const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Methods": "OPTIONS,POST",
+};
+
 // AWS Lambda Handler
 exports.handler = async (event) => {
     try {
@@ -15,6 +22,7 @@ exports.handler = async (event) => {
         if (!authHeader) {
             return {
                 statusCode: 401,
+                headers: corsHeaders,
                 body: JSON.stringify({ message: 'Missing Authorization header.' }),
             };
         }
@@ -23,6 +31,7 @@ exports.handler = async (event) => {
         if (!token) {
             return {
                 statusCode: 401,
+                headers: corsHeaders,
                 body: JSON.stringify({ message: 'Invalid Authorization header format.' }),
             };
         }
@@ -34,6 +43,7 @@ exports.handler = async (event) => {
         } catch (err) {
             return {
                 statusCode: 401,
+                headers: corsHeaders,
                 body: JSON.stringify({ message: 'Invalid or expired token.' }),
             };
         }
@@ -42,6 +52,7 @@ exports.handler = async (event) => {
         if (!walletAddress) {
             return {
                 statusCode: 400,
+                headers: corsHeaders,
                 body: JSON.stringify({ message: 'Invalid token payload.' }),
             };
         }
@@ -55,6 +66,7 @@ exports.handler = async (event) => {
             if (!body[field]) {
                 return {
                     statusCode: 400,
+                    headers: corsHeaders,
                     body: JSON.stringify({ message: `${field} is required.` }),
                 };
             }
@@ -64,6 +76,7 @@ exports.handler = async (event) => {
         if (body.walletAddress && body.walletAddress !== walletAddress) {
             return {
                 statusCode: 403,
+                headers: corsHeaders,
                 body: JSON.stringify({ message: 'Wallet address mismatch.' }),
             };
         }
@@ -98,12 +111,14 @@ exports.handler = async (event) => {
 
         return {
             statusCode: 200,
+            headers: corsHeaders,
             body: JSON.stringify({ message: 'PageInfo added successfully.', item }),
         };
     } catch (error) {
         console.error('Error in AddPageInfoFunction:', error);
         return {
             statusCode: 500,
+            headers: corsHeaders,
             body: JSON.stringify({ message: 'Internal server error.' }),
         };
     }
