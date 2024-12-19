@@ -7,6 +7,7 @@ nacl.util = require('tweetnacl-util');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 const JWT_SECRET = process.env.JWT_SECRET;
+const USERS_TABLE = process.env.JWT_SECRET;
 const JWT_EXPIRATION = 1800; // In seconds
 
 const corsHeaders = {
