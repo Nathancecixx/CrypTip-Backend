@@ -1,5 +1,3 @@
-// Add comment to trigger CI/CD
-
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
 const { PublicKey } = require('@solana/web3.js');
@@ -10,6 +8,12 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRATION = 1800; // In seconds
+
+const corsHeaders = {
+    "Access-Control-Allow-Origin": "*", 
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Methods": "OPTIONS,POST",
+};
 
 // AWS Lambda Handler
 exports.handler = async (event) => {
@@ -45,12 +49,14 @@ exports.handler = async (event) => {
 
         return {
             statusCode: 200,
+            headers:corsHeaders,
             body: JSON.stringify({ token }),
         };
     } catch (error) {
         console.error('Error in AuthenticateFunction:', error);
         return {
             statusCode: 500,
+            headers:corsHeaders,
             body: JSON.stringify({ message: 'Internal server error.' }),
         };
     }
