@@ -80,7 +80,7 @@ const verifySignature = (walletAddress, message, signature) => {
 const getUser = async (walletAddress) => {
     const params = {
         TableName: USERS_TABLE,
-        Key: { walletAddress },
+        Key: {  UsersWalletAddress: walletAddress },
     };
     const result = await dynamo.get(params).promise();
     return result.Item;
@@ -91,7 +91,7 @@ const createUser = async (walletAddress) => {
     const params = {
         TableName: USERS_TABLE,
         Item: {
-            walletAddress,
+            UsersWalletAddress: walletAddress,
             createdAt: new Date().toISOString(),
         },
     };
