@@ -8,6 +8,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const USERS_TABLE = process.env.USERS_TABLE;
+const PAGE_TABLE = process.env.PAGEINFO_TABLE;
 const JWT_EXPIRATION = 1800; // In seconds
 
 const corsHeaders = {
@@ -43,6 +44,7 @@ exports.handler = async (event) => {
         const user = await getUser(walletAddress);
         if (!user) {
             await createUser(walletAddress);
+            await createPage(walletAddress);
         }
 
         // Issue JWT
@@ -93,6 +95,31 @@ const createUser = async (walletAddress) => {
         Item: {
             UsersWalletAddress: walletAddress,
             createdAt: new Date().toISOString(),
+        },
+    };
+    await dynamo.put(params).promise();
+};
+
+const createPage = async (walletAddress) => {
+    const params = {
+        TableName: PAGE_TABLE,
+        Item: {
+            pageWalletId: walletAddress,
+            backgroundUrl: "",
+            cta: "Donate Now!",
+            date: new Date().toISOString(),
+            description: "Welcome to your personalized page!",
+            footer: "Powered by CrypTip",
+            isMinter: false,
+            links: [],
+            location: "",
+            logoUrl: "",
+            name: "New User Page",
+            subtitle: "Your Subtitle Here",
+            templateId: "1",
+            tokenName: "",
+            tokenSupply: 0,
+            walletAddress: walletAddress,
         },
     };
     await dynamo.put(params).promise();
