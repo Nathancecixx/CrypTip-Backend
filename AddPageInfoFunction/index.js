@@ -83,21 +83,22 @@ exports.handler = async (event) => {
 
         // Define the item to be inserted
         const item = {
-            pageWalletId: body.pageWalletId,
+            pageWalletId: body.pageWalletId || walletAddress,
             backgroundUrl: body.backgroundUrl || '',
-            cta: body.cta,
+            cta: body.cta || '',
             date: body.date || new Date().toISOString(),
             description: body.description,
             footer: body.footer || '',
-            isMinter: body.isMinter || false,
             links: body.links || [],
             location: body.location || '',
+            qrCode: body.qrCode || false,
+            donate: body.donate || false,
             logoUrl: body.logoUrl || '',
-            name: body.name,
+            name: body.name || '',
             subtitle: body.subtitle || '',
             templateId: body.templateId || 1,
-            tokenName: body.tokenName || '',
-            tokenSupply: body.tokenSupply || '',
+            videoEmbed: body.videoEmbed || '',
+            donationGoal: body.donationGoal || '',
             walletAddress: body.walletAddress || walletAddress,
         };
 
