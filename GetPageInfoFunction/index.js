@@ -1,24 +1,26 @@
 const AWS = require('aws-sdk');
+const rateLimit = require('lambda-rate-limiter')().check;
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 const PAGEINFO_TABLE = "TipPageInfo";
+const MAX_REQUESTS_PER_MIN = 5;
+
+const corsHeaders = {
+    "Access-Control-Allow-Origin": " * ", // Specify frontend domain
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "OPTIONS,GET",
+};
 
 // AWS Lambda Handler
 exports.handler = async (event) => {
-    const corsHeaders = {
-        "Access-Control-Allow-Origin": "*", // Or specify your frontend domain
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "OPTIONS,GET", // Include allowed methods
-    };
-
     try {
+
+        // Rate limiting
+        await rateLimit(MAX_REQUESTS_PER_MIN, event.requestContext.identity.sourceIp);
+        
         // Extract pageWalletId from path parameters
         const { pageWalletId } = event.pathParameters;
-        
-        console.log("Event object:", event);
-        console.log("Path parameters:", event.pathParameters);
-        console.log("Received pageWalletId:", pageWalletId);
 
         if (!pageWalletId) {
             return {
@@ -35,7 +37,7 @@ exports.handler = async (event) => {
         };
 
         const result = await dynamo.get(params).promise();
-        console.log(result);
+        
         if (!result.Item) {
             return {
                 statusCode: 404,
@@ -50,6 +52,13 @@ exports.handler = async (event) => {
             body: JSON.stringify(result.Item),
         };
     } catch (error) {
+        if (error.name === 'TooManyRequestsError') {
+            return {
+                statusCode: 429,
+                headers: corsHeaders,
+                body: JSON.stringify({ message: 'Rate limit exceeded. Please try again later.' }),
+            };
+        }
         console.error('Error in GetPageInfoFunction:', error);
         return {
             statusCode: 500,

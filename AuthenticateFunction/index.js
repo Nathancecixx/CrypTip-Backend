@@ -10,6 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const USERS_TABLE = process.env.USERS_TABLE;
 const PAGE_TABLE = process.env.PAGEINFO_TABLE;
 const JWT_EXPIRATION = 1800; // In seconds
+const MAX_REQUESTS_PER_MIN = 5;
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*", 
@@ -20,6 +21,9 @@ const corsHeaders = {
 // AWS Lambda Handler
 exports.handler = async (event) => {
     try {
+        // Rate limiting
+        await rateLimit(MAX_REQUESTS_PER_MIN, event.requestContext.identity.sourceIp);
+
         const body = JSON.parse(event.body);
         const { walletAddress, message, signature } = body;
 
@@ -56,7 +60,16 @@ exports.handler = async (event) => {
             body: JSON.stringify({ token }),
         };
     } catch (error) {
+        if (error.name === 'TooManyRequestsError') {
+            return {
+                statusCode: 429,
+                headers: corsHeaders,
+                body: JSON.stringify({ message: 'Rate limit exceeded. Please try again later.' }),
+            };
+        }
+
         console.error('Error in AuthenticateFunction:', error);
+        
         return {
             statusCode: 500,
             headers:corsHeaders,

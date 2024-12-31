@@ -6,6 +6,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 
 const PAGEINFO_TABLE = process.env.PAGEINFO_TABLE;
 const JWT_SECRET = process.env.JWT_SECRET;
+const MAX_REQUESTS_PER_MIN = 5;
 
 
 const corsHeaders = {
@@ -17,6 +18,9 @@ const corsHeaders = {
 // AWS Lambda Handler
 exports.handler = async (event) => {
     try {
+        // Rate limiting
+        await rateLimit(MAX_REQUESTS_PER_MIN, event.requestContext.identity.sourceIp);
+
         // Extract JWT from Authorization header
         const authHeader = event.headers.Authorization || event.headers.authorization;
         if (!authHeader) {
@@ -85,7 +89,8 @@ exports.handler = async (event) => {
         const item = {
             pageWalletId: body.pageWalletId || walletAddress,
             backgroundUrl: body.backgroundUrl || '',
-            cta: body.cta || '',
+            ctaMessage: body.ctaMessage || '',
+            ctaLink: body.ctaLink || '',
             date: body.date || new Date().toISOString(),
             description: body.description,
             footer: body.footer || '',
@@ -100,6 +105,17 @@ exports.handler = async (event) => {
             videoEmbed: body.videoEmbed || '',
             donationGoal: body.donationGoal || '',
             walletAddress: body.walletAddress || walletAddress,
+            colorPalette: {
+                primary: body.colorPalette?.primary || '#000000',
+                secondary: body.colorPalette?.secondary || '#FFFFFF',
+                background: body.colorPalette?.background || '#F0F0F0',
+                text: body.colorPalette?.text || '#000000',
+                textAccent: body.colorPalette?.textAccent || '#FFFFFF',
+                footerBackground: body.colorPalette?.footerBackground || '#333333',
+                footerText: body.colorPalette?.footerText || '#FFFFFF',
+                cardBackground: body.colorPalette?.cardBackground || '#FFFFFF',
+                cardText: body.colorPalette?.cardText || '#000000',
+            },
         };
 
         const params = {
@@ -116,7 +132,16 @@ exports.handler = async (event) => {
             body: JSON.stringify({ message: 'PageInfo added successfully.', item }),
         };
     } catch (error) {
+        if (error.name === 'TooManyRequestsError') {
+            return {
+                statusCode: 429,
+                headers: corsHeaders,
+                body: JSON.stringify({ message: 'Rate limit exceeded. Please try again later.' }),
+            };
+        }
+
         console.error('Error in AddPageInfoFunction:', error);
+
         return {
             statusCode: 500,
             headers: corsHeaders,
