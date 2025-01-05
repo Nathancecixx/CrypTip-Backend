@@ -1,8 +1,11 @@
 
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
-const rateLimit = require('lambda-rate-limiter')().check;
 
+const limiter = require('lambda-rate-limiter')({
+    interval: 60000, // 1 minute
+    uniqueTokenPerInterval: 500,
+});
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
@@ -21,7 +24,7 @@ const corsHeaders = {
 exports.handler = async (event) => {
     try {
         // Rate limiting
-        await rateLimit(MAX_REQUESTS_PER_MIN, event.requestContext.identity.sourceIp);
+        await limiter.check(MAX_REQUESTS_PER_MIN, event.requestContext.identity.sourceIp);
 
         // Extract JWT from Authorization header
         const authHeader = event.headers.Authorization || event.headers.authorization;

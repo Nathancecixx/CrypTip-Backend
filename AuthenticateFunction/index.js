@@ -3,7 +3,11 @@ const jwt = require('jsonwebtoken');
 const { PublicKey } = require('@solana/web3.js');
 const nacl = require('tweetnacl');
 nacl.util = require('tweetnacl-util');
-const rateLimit = require('lambda-rate-limiter')().check;
+
+const limiter = require('lambda-rate-limiter')({
+    interval: 60000, // 1 minute
+    uniqueTokenPerInterval: 500,
+});
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
@@ -23,7 +27,7 @@ const corsHeaders = {
 exports.handler = async (event) => {
     try {
         // Rate limiting
-        await rateLimit(MAX_REQUESTS_PER_MIN, event.requestContext.identity.sourceIp);
+        await limiter.check(MAX_REQUESTS_PER_MIN, event.requestContext.identity.sourceIp);
 
         const body = JSON.parse(event.body);
         const { walletAddress, message, signature } = body;
