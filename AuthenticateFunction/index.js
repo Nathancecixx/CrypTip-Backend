@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { PublicKey } = require('@solana/web3.js');
 const nacl = require('tweetnacl');
 nacl.util = require('tweetnacl-util');
+const rateLimit = require('lambda-rate-limiter')().check;
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
@@ -69,7 +70,7 @@ exports.handler = async (event) => {
         }
 
         console.error('Error in AuthenticateFunction:', error);
-        
+
         return {
             statusCode: 500,
             headers:corsHeaders,

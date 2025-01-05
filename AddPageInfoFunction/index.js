@@ -1,6 +1,8 @@
 
 const AWS = require('aws-sdk');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('lambda-rate-limiter')().check;
+
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
