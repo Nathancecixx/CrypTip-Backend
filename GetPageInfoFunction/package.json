@@ -7,8 +7,9 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.1234.0"
+    "aws-sdk": "^2.1234.0",
+    "lambda-rate-limiter": "^1.0.0"
   },
-  "author": "Your Name",
+  "author": "Nathan Ceci",
   "license": "ISC"
 }

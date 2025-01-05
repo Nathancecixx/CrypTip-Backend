@@ -11,9 +11,10 @@
       "aws-sdk": "^2.1234.0",
       "jsonwebtoken": "^9.0.0",
       "tweetnacl": "^1.0.3",
-      "tweetnacl-util": "^0.15.1"
+      "tweetnacl-util": "^0.15.1",
+      "lambda-rate-limiter": "^1.0.0"
     },
-    "author": "Your Name",
+    "author": "Nathan Ceci",
     "license": "ISC"
   }
   
