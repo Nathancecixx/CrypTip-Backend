@@ -70,7 +70,7 @@ exports.handler = async (event) => {
         const body = JSON.parse(event.body);
 
         // Validate required fields
-        const requiredFields = ['pageWalletId', 'name', 'cta', 'description'];
+        const requiredFields = ['pageWalletId', 'name'];
         for (const field of requiredFields) {
             if (!body[field]) {
                 return {
